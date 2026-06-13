@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SQL Injection Detector</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+        }
+
+        nav {
+            background: #1e293b;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #8b5cf6;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 80px auto;
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid #8b5cf6;
+            background: #0f172a;
+            color: white;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .safe {
+            background: #22c55e;
+        }
+
+        .unsafe {
+            background: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>SQL Injection</nav>
+
+<div class="container">
+    <h2>SQL Query</h2>
+
+    <textarea id="query" placeholder="Enter SQL query..."></textarea>
+
+    <button onclick="checkQuery()">Validate Query</button>
+
+    <div id="result" class="result"></div>
+</div>
+
+<script>
+function checkQuery() {
+    const query = document.getElementById("query").value;
+
+    fetch('/validate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ query: query })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultDiv = document.getElementById("result");
+
+        if (data.result.includes("Safe")) {
+            resultDiv.className = "result safe";
+        } else {
+            resultDiv.className = "result unsafe";
+        }
+
+        resultDiv.innerText = data.result;
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+}
+</script>
+
+</body>
+</html>
